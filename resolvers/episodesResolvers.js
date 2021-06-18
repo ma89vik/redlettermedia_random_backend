@@ -22,7 +22,14 @@ const addEpisode = async (args) => {
 }
 
 const getEpisodes = (args) => {
-  const filter = { gimmick: { $in: args.gimmicks }, hosts: { $in: args.hosts}  }
+  const filter = {}
+
+  if (args.gimmicks) {
+    filter.gimmick = { $in: args.gimmicks }
+  }
+  if (args.hosts) {
+    filter.hosts = { $in: args.hosts }
+  }
 
   console.log("find episode", filter)
   return Episode.find(filter).populate('films')

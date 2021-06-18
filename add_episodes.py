@@ -89,7 +89,7 @@ class Episode:
 # Select your transport with a defined url endpoint
 transport = AIOHTTPTransport(url="http://localhost:4000/")
 # Create a GraphQL client using the defined transport
-client = Client(transport=transport, fetch_schema_from_transport=True)
+client = Client(transport=transport, fetch_schema_from_transport=True, execute_timeout=100)
 
 #cleanup old data
 result = client.execute(dropCollectionsQuery)
@@ -103,6 +103,8 @@ with open('botw.csv', newline='') as csvfile:
 
 for episode in episodes:
     params = {"episode": episode.to_grapql_params()}
+    print("add episode:")
+    print(params)
     result = client.execute(addEpisodeQuery, variable_values=params)
 
 
