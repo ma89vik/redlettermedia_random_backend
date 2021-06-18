@@ -25,7 +25,11 @@ const schema = new mongoose.Schema({
   hosts: [{
     type: String,
     required: true,
-  }]
+  }],
+  link: {
+    type: String,
+    required: true,
+  }
 })
 
 schema.plugin(uniqueValidator)

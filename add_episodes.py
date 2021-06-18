@@ -74,6 +74,9 @@ class Episode:
         else:
             return 'Other'
 
+    def get_link(self):
+        return self.episode_info['Link'].strip(' ')
+
     def to_grapql_params(self):
         grapql_params = {
             "title": self.get_title(),
@@ -81,6 +84,7 @@ class Episode:
             'releaseDate': self.get_release_date(),
             'hosts': self.get_hosts(),
             'gimmick': self.get_gimmick(),
+            'link': self.get_link(),
         }
 
         return grapql_params

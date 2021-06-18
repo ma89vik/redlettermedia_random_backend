@@ -7,6 +7,7 @@ const episodeInputType = gql`
     releaseDate: Date!
     hosts: [String!]
     films: [FilmInput]!
+    link: String!
   }
 `
 
@@ -17,6 +18,7 @@ const episodeType = gql`
     releaseDate: Date
     hosts: [String]
     films: [Film]
+    link: String
   }
 `
 
