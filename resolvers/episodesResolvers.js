@@ -1,6 +1,4 @@
-const { argsToArgsConfig } = require('graphql/type/definition')
-const mongoose = require('mongoose')
-
+const episode = require('../models/episode')
 const Episode = require('../models/episode')
 
 const { addFilm } = require('./filmResolvers')
@@ -19,12 +17,29 @@ const addEpisode = async (args) => {
 
   const newEpisode = new Episode( episode )
 
-  newEpisode.save()
+  const ret = await newEpisode.save()
+  console.log("Finished adding", ret)
+}
+
+const getEpisodes = (args) => {
+  const filter = { gimmick: { $in: args.gimmicks }, hosts: { $in: args.hosts}  }
+
+  console.log("find episode", filter)
+  return Episode.find(filter).populate('films')
+}
+
+const getRandomEpisode = async (args) => {
+  const episodes = await getEpisodes(args)
+
+  return episodes[Math.floor(Math.random()*episodes.length)]
 }
 
 const episodesResolvers = {
   Query: {
-    episodes: () => Episode.find({}).populate('films')
+    episodes: (root, args) => getEpisodes(args),
+    gimmicks: () => Episode.distinct('gimmick'),
+    randomEpisode: (root, args) => getRandomEpisode(args)
+
   },
   Mutation: {
     addEpisode: async(root, args) => addEpisode(args)
