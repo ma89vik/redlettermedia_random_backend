@@ -2,12 +2,19 @@ const mongoose = require('mongoose')
 
 const Film = require('../models/film')
 
-const addFilm = (args) => {
+const addFilm = async (args) => {
   console.log('Add film', args)
+  const film = args.film
 
-  const newFilm = new Film( { ...args } )
+  const filter = { title: film.title }
+  const update = { poster: film.poster, url: film.url }
 
-  return newFilm.save()
+  const res = await Film.findOneAndUpdate(filter, update, {
+    new: true,
+    upsert: true
+  })
+  console.log("Result ", res)
+  return res
 }
 
 const filmResolvers = {
