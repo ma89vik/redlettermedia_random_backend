@@ -11,6 +11,16 @@ const mutation = gql`
     ): Film
 
     dropCollections : String
+
+    addUser(
+      username: String!
+      password: String!
+    ) : User
+
+    login(
+      username: String!
+      password: String!
+    ): Token
   }
 `
 
