@@ -8,7 +8,7 @@ const genericTypeDefs = gql`
   scalar Date
 `
 
-const types = [genericTypeDefs, episodeType, episodeInputType, filmType, filmInputType, hostType, usersTypes]
+const types = [genericTypeDefs, episodeType, episodeInputType, filmType, filmInputType, hostType, ...usersTypes]
 
 module.exports = {
   types,

@@ -1,10 +1,16 @@
 const episode = require('../models/episode')
 const Episode = require('../models/episode')
-
+const { AuthenticationError } = require('apollo-server-errors')
 const { addFilm } = require('./filmResolvers')
 
-const addEpisode = async (args) => {
+const addEpisode = async (args, context) => {
   console.log('Add episode', args)
+
+  const currentUser = context.currentUser
+
+  if (!currentUser) {
+    throw new AuthenticationError("not authenticated")
+  }
 
   const episode = { ...args.episode }
   episode.films = []
@@ -49,7 +55,7 @@ const episodesResolvers = {
 
   },
   Mutation: {
-    addEpisode: async(root, args) => addEpisode(args)
+    addEpisode: async(root, args, context) => addEpisode(args, context)
   }
 }
 

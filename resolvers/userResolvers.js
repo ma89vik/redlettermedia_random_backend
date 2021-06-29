@@ -1,12 +1,26 @@
 const mongoose = require('mongoose')
+
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+
+const { AuthenticationError, UserInputError } = require('apollo-server-errors')
 
 const User = require('../models/user')
 
-const JWT_SECRET = 'NEED_HERE_A_SECRET_KEY'
+const JWT_SECRET = process.env.JWT_SECRET
+const saltRounds = 10
 
-const createUser = (args) => {
-  const user = new User({ username: args.username })
+const createUser = async (args, context) => {
+
+  const currentUser = context.currentUser
+
+  if (!currentUser) {
+    throw new AuthenticationError("not authenticated")
+  }
+
+  const passwordHash = await bcrypt.hash(args.password, saltRounds)
+
+  const user = new User({ username: args.username, passwordHash: passwordHash })
 
   return user.save()
     .catch(error => {
@@ -19,7 +33,11 @@ const createUser = (args) => {
 const login = async ({username, password}) => {
   const user = await User.findOne({ username: username })
 
-  if ( !user || password !== 'secret' ) {
+  const passwordCorrect = user === null
+    ? false
+    : await bcrypt.compare(password, user.passwordHash)
+
+  if ( !passwordCorrect ) {
     throw new UserInputError("wrong credentials")
   }
 
@@ -33,11 +51,10 @@ const login = async ({username, password}) => {
 
 const userResolvers = {
   Mutation: {
-    createUser: (root, args) => createUser(args),
+    createUser: (root, args, context) => createUser(args, context),
     login: (root, args) => login(args)
   }
- ,
-},
+}
 
 module.exports = {
   userResolvers,

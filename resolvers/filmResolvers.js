@@ -1,9 +1,16 @@
 const mongoose = require('mongoose')
+const { AuthenticationError } = require('apollo-server-errors')
 
 const Film = require('../models/film')
 
-const addFilm = async (args) => {
-  console.log('Add film', args)
+const addFilm = async (args, context) => {
+  const currentUser = context.currentUser
+
+  if (!currentUser) {
+    throw new AuthenticationError("not authenticated")
+  }
+
+
   const film = args.film
 
   const filter = { title: film.title }
@@ -22,7 +29,7 @@ const filmResolvers = {
     films: () => Film.find({}),
   },
   Mutation: {
-    addFilm: async(root, args) => addFilm(args)
+    addFilm: async(root, args, context) => addFilm(args, context)
   }
 }
 

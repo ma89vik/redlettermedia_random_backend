@@ -12,7 +12,7 @@ const mutation = gql`
 
     dropCollections : String
 
-    addUser(
+    createUser(
       username: String!
       password: String!
     ) : User
